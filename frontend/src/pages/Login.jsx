@@ -1,7 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import axios from "../config/api";
 import toast, { Toaster } from "react-hot-toast";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useAuth } from "../context/AuthContext";
@@ -29,24 +29,18 @@ const Login = () => {
     setError("");
 
     try {
-      const response = await axios.post(
-        "http://localhost:4500/auth/login",
-        formData
-      );
-      sessionStorage.setItem("token", response.data.token);
+      const response = await axios.post("auth/login", formData);
       sessionStorage.setItem("user", JSON.stringify(response.data.user));
       setUser(response.data.user);
-
+      toast.success("Login successful!");
       // Check for admin role and redirect accordingly
       if (response.data.user.role === "Admin") {
         setIsAdmin(true);
-        navigate("/admin/dashboard");
+        navigate("/admin-dashboard");
       } else {
         setIsAdmin(false);
         navigate("/dashboard");
       }
-
-      toast.success("Login successful!");
     } catch (error) {
       const errorMessage = error.response?.data?.message || "Login failed";
       setError(errorMessage);

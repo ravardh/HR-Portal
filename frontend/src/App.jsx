@@ -6,20 +6,22 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Aboutus from "./pages/Aboutus";
 import Contact from "./pages/Contact";
-// import Dashboard from "./pages/Dashboard";
+import UserDashboard from "./pages/Dashboard/userDashboard";
+import AdminDashboard from "./pages/Dashboard/adminDashboard";
 
 const App = () => {
   return (
     <>
       <Router>
-       <Header/>
+        <Header />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login/>} />
+          <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/aboutus" element={<Aboutus/>} />
+          <Route path="/aboutus" element={<Aboutus />} />
           <Route path="/contact" element={<Contact />} />
-          {/* <Route path="/dashboard" element={<Dashboard />} /> */}
+          <Route path="/dashboard" element={<UserDashboard />} />
+          <Route path="/admin-dashboard" element={<AdminDashboard />} />
         </Routes>
       </Router>
     </>

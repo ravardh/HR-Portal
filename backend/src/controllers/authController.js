@@ -11,7 +11,9 @@ export const userLogin = async (req, res) => {
       error.statusCode = 400;
       return next(error);
     }
-
+    // console.log("email", email);
+    // console.log("password", password);
+    
     // Find user by email
     const user = await User.findOne({ email });
     if (!user) {
@@ -19,7 +21,8 @@ export const userLogin = async (req, res) => {
       error.statusCode = 404;
       return next(error);
     }
-
+   // console.log("user", user);
+    
     // Verify password
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
@@ -28,6 +31,8 @@ export const userLogin = async (req, res) => {
       return next(error);
     }
 
+   // console.log("isPasswordValid", isPasswordValid);
+    
     // Generate JWT token
     genAuthToken(user._id, res);
 
@@ -39,8 +44,9 @@ export const userLogin = async (req, res) => {
         email: user.email,
         department: user.department,
         position: user.position,
-      },
-      token,
+        gender: user.gender,
+        profilePic: user.profilePic,
+      }
     });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
@@ -89,6 +95,8 @@ export const userRegister = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
+    const profilePic = `https://placehold.co/400X400?text=${name.charAt(0)}`;
+
     const newUser = await User.create({
       fullName,
       email,
@@ -102,7 +110,7 @@ export const userRegister = async (req, res) => {
       salary,
       password: hashedPassword,
       status: "Active",
-      profilePic: "",
+      profilePic: profilePic,
     });
 
     res.status(201).json({

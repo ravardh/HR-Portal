@@ -2,11 +2,14 @@ import express from "express";
 import AuthRouter from "./src/routers/authRouter.js";
 import connectDB from "./src/config/db.js";
 import cors from "cors";
+import morgan from "morgan";
+import cookieParser from "cookie-parser";
 
 const app = express();
-app.use(cors());
+app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 app.use(express.json());
-
+app.use(cookieParser());
+app.use(morgan("dev"));
 app.use("/auth", AuthRouter);
 
 app.get("/", (req, res) => {
