@@ -95,7 +95,7 @@ export const userRegister = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const profilePic = `https://placehold.co/400X400?text=${name.charAt(0)}`;
+    const profilePic = `https://placehold.co/400X400?text=${fullName.charAt(0)}`;
 
     const newUser = await User.create({
       fullName,
