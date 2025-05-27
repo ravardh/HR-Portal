@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import axios from "../config/api";
 import toast, { Toaster } from "react-hot-toast";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
@@ -95,7 +95,7 @@ const Register = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:4500/auth/register",
+        "auth/register",
         data
       );
       toast.success("Registration successful!");

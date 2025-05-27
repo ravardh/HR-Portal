@@ -1,5 +1,6 @@
 import express from "express";
 import AuthRouter from "./src/routers/authRouter.js";
+import UserRouter from "./src/routers/userRouter.js";
 import connectDB from "./src/config/db.js";
 import cors from "cors";
 import morgan from "morgan";
@@ -11,6 +12,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(morgan("dev"));
 app.use("/auth", AuthRouter);
+app.use("/user", UserRouter);
 
 app.get("/", (req, res) => {
   res.status(200).json({ message: "Server Working" });

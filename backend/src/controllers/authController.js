@@ -108,6 +108,7 @@ export const userRegister = async (req, res) => {
       position,
       hiringDate,
       salary,
+      role: "Employee",
       password: hashedPassword,
       status: "Active",
       profilePic: profilePic,
