@@ -16,6 +16,8 @@ export const userProfile = async (req, res, next) => {
         id: user._id,
         fullName: user.fullName,
         email: user.email,
+        phone: user.phone,
+        dob: user.dob,
         department: user.department,
         position: user.position,
         gender: user.gender,
@@ -23,6 +25,7 @@ export const userProfile = async (req, res, next) => {
         qualification: user.qualification,
         hiringDate: user.hiringDate,
         salary: user.salary,
+        status: user.status,
       },
     });
   } catch (error) {
