@@ -1,19 +1,20 @@
 import React, { useEffect, useState } from "react";
 import axios from "../../config/api.jsx";
-import Cookies from "js-cookie";
 
 import {
   FiMail,
-  FiUser,
   FiBriefcase,
   FiPhone,
   FiCalendar,
   FiBookOpen,
+  FiClock,
+  FiMapPin,
 } from "react-icons/fi";
 import { BsCake2 } from "react-icons/bs";
-import { FaTransgenderAlt } from "react-icons/fa";
+import { FaTransgenderAlt, FaUserTie } from "react-icons/fa";
 import { GiTakeMyMoney } from "react-icons/gi";
 import { GrStatusGood } from "react-icons/gr";
+import { MdOutlineWeekend } from "react-icons/md";
 
 const Profile = () => {
   const [user, setUser] = useState(null);
@@ -27,11 +28,12 @@ const Profile = () => {
 
         if (response.data?.user) {
           setUser(response.data.user);
+          localStorage.setItem("userData", JSON.stringify(response.data.user));
         } else {
           throw new Error("User data not found");
         }
       } catch (err) {
-        console.error("❌ Profile fetch error:", err);
+        console.error("Profile fetch error:", err);
         setError(
           err.response?.data?.message ||
             err.message ||
@@ -62,8 +64,7 @@ const Profile = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto p-6 bg-white ">
-
+    <div className="max-w-7xl mx-auto p-6 bg-white">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="p-4 bg-gray-50 rounded-lg shadow">
           <h3 className="font-semibold text-gray-700 flex items-center gap-2">
@@ -105,7 +106,7 @@ const Profile = () => {
           <h3 className="font-semibold text-gray-700 flex items-center gap-2">
             <FiBookOpen /> Qualification
           </h3>
-          <p className="text-gray-600">{user.qualification}</p>
+          <p className="text-gray-600">{user.qualification.toUpperCase()}</p>
         </div>
         <div className="p-4 bg-gray-50 rounded-lg shadow">
           <h3 className="font-semibold text-gray-700 flex items-center gap-2">
@@ -126,6 +127,27 @@ const Profile = () => {
           </h3>
           <p className="text-gray-600">{user.status}</p>
         </div>
+
+        <div className="p-4 bg-gray-50 rounded-lg shadow">
+          <h3 className="font-semibold text-gray-700 flex items-center gap-2">
+            <FiClock /> Shift Time
+          </h3>
+          <p className="text-gray-600">
+            {user.shiftStartTime} - {user.shiftEndTime}
+          </p>
+        </div>
+        <div className="p-4 bg-gray-50 rounded-lg shadow">
+          <h3 className="font-semibold text-gray-700 flex items-center gap-2">
+            <MdOutlineWeekend /> Week Off
+          </h3>
+          <p className="text-gray-600">{user.weekOff}</p>
+        </div>
+      </div>
+      <div className="p-4 bg-gray-50 rounded-lg shadow mt-2">
+        <h3 className="font-semibold text-gray-700 flex items-center gap-2">
+          <FiMapPin /> Address
+        </h3>
+        <p className="text-gray-600">{user.address}</p>
       </div>
     </div>
   );

@@ -13,7 +13,7 @@ export const userLogin = async (req, res) => {
     }
     // console.log("email", email);
     // console.log("password", password);
-    
+
     // Find user by email
     const user = await User.findOne({ email });
     if (!user) {
@@ -21,8 +21,8 @@ export const userLogin = async (req, res) => {
       error.statusCode = 404;
       return next(error);
     }
-   // console.log("user", user);
-    
+    // console.log("user", user);
+
     // Verify password
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
@@ -31,8 +31,8 @@ export const userLogin = async (req, res) => {
       return next(error);
     }
 
-   // console.log("isPasswordValid", isPasswordValid);
-    
+    // console.log("isPasswordValid", isPasswordValid);
+
     // Generate JWT token
     genAuthToken(user._id, res);
 
@@ -46,7 +46,7 @@ export const userLogin = async (req, res) => {
         position: user.position,
         gender: user.gender,
         profilePic: user.profilePic,
-      }
+      },
     });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
@@ -67,6 +67,10 @@ export const userRegister = async (req, res) => {
       hiringDate,
       salary,
       password,
+      shiftStartTime,
+      shiftEndTime,
+      address,
+      weekOff,
     } = req.body;
 
     if (
@@ -80,7 +84,11 @@ export const userRegister = async (req, res) => {
       !salary ||
       !password ||
       !gender ||
-      !dob
+      !dob ||
+      !shiftStartTime ||
+      !shiftEndTime ||
+      !address ||
+      !weekOff
     ) {
       return res.status(400).json({ message: "All fields are required" });
     }
@@ -95,7 +103,9 @@ export const userRegister = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const profilePic = `https://placehold.co/400X400?text=${fullName.charAt(0)}`;
+    const profilePic = `https://placehold.co/400X400?text=${fullName.charAt(
+      0
+    )}`;
 
     const newUser = await User.create({
       fullName,
@@ -108,6 +118,10 @@ export const userRegister = async (req, res) => {
       position,
       hiringDate,
       salary,
+      shiftStartTime,
+      shiftEndTime,
+      address,
+      weekOff,
       role: "Employee",
       password: hashedPassword,
       status: "Active",

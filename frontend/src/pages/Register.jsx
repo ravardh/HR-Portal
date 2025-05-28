@@ -21,6 +21,10 @@ const Register = () => {
     salary: "",
     crPassword: "",
     password: "",
+    shiftStartTime: "",
+    shiftEndTime: "",
+    address: "",
+    weekOff: "Sunday",
   });
 
   const handelChange = (e) => {
@@ -60,11 +64,25 @@ const Register = () => {
     const birthDate = new Date(data.dob);
     const today = new Date();
     const age = today.getFullYear() - birthDate.getFullYear();
-
     if (age < 21) {
       tempErrors.dob = "Age should be at least 21 years";
     }
 
+    // Position validation
+    if (data.position.trim().length < 2) {
+      tempErrors.position = "Position is required";
+    }
+
+    // Salary validation
+    if (isNaN(data.salary) || Number(data.salary) <= 0) {
+      tempErrors.salary = "Please enter a valid salary amount";
+    }
+
+    // Address validation
+    if (data.address.trim().length < 10) {
+      tempErrors.address =
+        "Please enter a complete address (minimum 10 characters)";
+    }
     // Password validation
     if (
       !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
@@ -94,10 +112,7 @@ const Register = () => {
     }
 
     try {
-      const response = await axios.post(
-        "auth/register",
-        data
-      );
+      const response = await axios.post("auth/register", data);
       toast.success("Registration successful!");
       setData({
         fullName: "",
@@ -112,6 +127,10 @@ const Register = () => {
         salary: "",
         crPassword: "",
         password: "",
+        shiftStartTime: "",
+        shiftEndTime: "",
+        address: "",
+        weekOff: "Sunday",
       });
       navigate("/login");
     } catch (error) {
@@ -245,7 +264,6 @@ const Register = () => {
             </div>
           </div>
 
-
           {/* Qualification */}
           <div>
             <label className="block mb-1 text-blue-900 font-medium">
@@ -333,6 +351,9 @@ const Register = () => {
               onChange={handelChange}
               required
             />
+            {errors.salary && (
+              <p className="mt-1 text-sm text-red-500">{errors.salary}</p>
+            )}
           </div>
 
           {/* Create Password */}
@@ -375,6 +396,76 @@ const Register = () => {
             {errors.password && (
               <p className="mt-1 text-sm text-red-500">{errors.password}</p>
             )}
+          </div>
+
+          {/* Address */}
+          <div>
+            <label className="block mb-1 text-blue-900 font-medium">
+              Address
+            </label>
+            <textarea
+              name="address"
+              className="w-full px-4 py-3 rounded-xl bg-white/60 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-400"
+              rows="3"
+              value={data.address}
+              onChange={handelChange}
+              required
+            />
+            {errors.address && (
+              <p className="mt-1 text-sm text-red-500">{errors.address}</p>
+            )}
+          </div>
+
+          {/* Shift Start Time */}
+          <div>
+            <label className="block mb-1 text-blue-900 font-medium">
+              Shift Start Time
+            </label>
+            <input
+              type="time"
+              name="shiftStartTime"
+              className="w-full px-4 py-3 rounded-xl bg-white/60 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-400"
+              value={data.shiftStartTime}
+              onChange={handelChange}
+              required
+            />
+          </div>
+
+          {/* Shift End Time */}
+          <div>
+            <label className="block mb-1 text-blue-900 font-medium">
+              Shift End Time
+            </label>
+            <input
+              type="time"
+              name="shiftEndTime"
+              className="w-full px-4 py-3 rounded-xl bg-white/60 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-400"
+              value={data.shiftEndTime}
+              onChange={handelChange}
+              required
+            />
+          </div>
+
+          {/* Week Off */}
+          <div>
+            <label className="block mb-1 text-blue-900 font-medium">
+              Week Off
+            </label>
+            <select
+              name="weekOff"
+              className="w-full px-4 py-3 rounded-xl bg-white/60 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-400"
+              value={data.weekOff}
+              onChange={handelChange}
+              required
+            >
+              <option value="Sunday">Sunday</option>
+              <option value="Monday">Monday</option>
+              <option value="Tuesday">Tuesday</option>
+              <option value="Wednesday">Wednesday</option>
+              <option value="Thursday">Thursday</option>
+              <option value="Friday">Friday</option>
+              <option value="Saturday">Saturday</option>
+            </select>
           </div>
 
           {/* Submit */}

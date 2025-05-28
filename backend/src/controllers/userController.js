@@ -26,6 +26,11 @@ export const userProfile = async (req, res, next) => {
         hiringDate: user.hiringDate,
         salary: user.salary,
         status: user.status,
+        weekOff: user.weekOff,
+        address: user.address,
+        shiftStartTime: user.shiftStartTime,
+        shiftEndTime: user.shiftEndTime,
+        role: user.role,
       },
     });
   } catch (error) {
