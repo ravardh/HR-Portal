@@ -5,57 +5,63 @@ import {
   HiOutlineCalendar,
 } from "react-icons/hi";
 import { FiUserX, FiUser } from "react-icons/fi";
-import Profile from "../../components/user/Profile";
-import Payslip from "../../components/user/Payslip";
-import Leave from "../../components/user/Leave";
-import Calender from "../../components/user/Calender";
-import UpdateProfileModal from "../../components/user/UpdateProfileModal";
+import EmployeeProfile from "../../components/user/Profile.jsx";
+import EmployeePayslip from "../../components/user/Payslip.jsx";
+import EmployeeLeave from "../../components/user/Leave.jsx";
+import EmployeeCalendar from "../../components/user/Calender.jsx";
+import UpdateEmployeeModal from "../../components/user/UpdateProfileModal.jsx";
 
-const UserDashboard = () => {
+
+import axios from "axios";
+
+const EmployeeDashboard = () => {
   const [activeTab, setActiveTab] = useState("profile");
   const [showModal, setShowModal] = useState(false);
-  const [user, setUser] = useState({});
+  const [employee, setEmployee] = useState({});
 
   useEffect(() => {
-    // Load user data from localStorage when component mounts
-    const userData = JSON.parse(localStorage.getItem("userData")) || {
-      fullName: "",
-      department: "",
-      position: "",
-      email: "",
-      phone: "",
-      dob: "",
-      gender: "",
-      profilePic: "",
+    const fetchEmployee = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get("/api/employee/profile", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setEmployee(response.data);
+      } catch (error) {
+        console.error("Failed to fetch employee profile", error);
+      }
     };
-    setUser(userData);
-  }, [showModal]); // Re-fetch when modal closes
 
-  const handleTabChange = (tab) => setActiveTab(tab);
+    fetchEmployee();
+  }, [showModal]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    window.location.href = "/login";
+  };
 
   return (
     <div className="max-w-[90vw] mx-auto mt-8">
-      <div className="bg-white mb-6">
+      <div className="bg-white mb-6 p-4 rounded-lg shadow-md">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           {/* Profile Image & Info */}
           <div className="flex sm:flex-row justify-center items-center gap-4">
-            {/* Profile Image */}
             <div>
               <img
-                src={user.profilePic || "/default-avatar.png"}
-                alt={user.fullName}
+                src={employee.profilePic || "/default-avatar.png"}
+                alt={employee.fullName}
                 className="w-20 h-20 rounded-full object-cover"
               />
             </div>
-
-            {/* User Info */}
             <div className="sm:text-left">
-              <h2 className="text-2xl font-bold">{user.fullName}</h2>
+              <h2 className="text-2xl font-bold">{employee.fullName}</h2>
               <p className="text-gray-600">
-                {user.department ? user.department.toUpperCase() : ""}
+                {employee.department?.toUpperCase() || ""}
               </p>
-              <p className="text-gray-500 text-sm">{user.position}</p>
+              <p className="text-gray-500 text-sm">{employee.position}</p>
             </div>
           </div>
 
@@ -63,12 +69,15 @@ const UserDashboard = () => {
           <div className="flex sm:flex-row gap-2 items-center justify-center">
             <button
               onClick={() => setShowModal(true)}
-              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center justify-center w-full sm:w-auto"
+              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center"
             >
               <FiUser className="h-5 w-5 mr-2" />
               Update Profile
             </button>
-            <button className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg flex items-center justify-center w-full sm:w-auto">
+            <button
+              onClick={handleLogout}
+              className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg flex items-center"
+            >
               <HiOutlineLogout className="h-5 w-5 mr-2" />
               Logout
             </button>
@@ -76,51 +85,54 @@ const UserDashboard = () => {
         </div>
 
         {/* Tabs */}
-        <div className="flex flex-wrap justify-center gap-4 mt-5 sm:mt-0 mb-0 bg-white border-b border-gray-200">
+        <div className="flex flex-wrap justify-center gap-4 mt-5 border-b border-gray-200">
           <TabButton
             label="Profile"
             icon={<FiUser className="h-5 w-5 mr-2" />}
             isActive={activeTab === "profile"}
-            onClick={() => handleTabChange("profile")}
+            onClick={() => setActiveTab("profile")}
           />
           <TabButton
             label="Payslip"
             icon={<HiOutlineCash className="h-5 w-5 mr-2" />}
             isActive={activeTab === "payslip"}
-            onClick={() => handleTabChange("payslip")}
+            onClick={() => setActiveTab("payslip")}
           />
           <TabButton
             label="Leave"
             icon={<FiUserX className="h-5 w-5 mr-2" />}
             isActive={activeTab === "leave"}
-            onClick={() => handleTabChange("leave")}
+            onClick={() => setActiveTab("leave")}
           />
           <TabButton
             label="Calendar"
             icon={<HiOutlineCalendar className="h-5 w-5 mr-2" />}
             isActive={activeTab === "calendar"}
-            onClick={() => handleTabChange("calendar")}
+            onClick={() => setActiveTab("calendar")}
           />
         </div>
 
         {/* Tab Content */}
         <div className="min-h-[300px] p-5">
-          {activeTab === "profile" && <Profile />}
-          {activeTab === "payslip" && <Payslip />}
-          {activeTab === "leave" && <Leave />}
-          {activeTab === "calendar" && <Calender />}
+          {activeTab === "profile" && <EmployeeProfile employee={employee} />}
+          {activeTab === "payslip" && <EmployeePayslip employeeId={employee._id} />}
+          {activeTab === "leave" && <EmployeeLeave employeeId={employee._id} />}
+          {activeTab === "calendar" && <EmployeeCalendar />}
         </div>
       </div>
 
       {/* Modal */}
       {showModal && (
-        <UpdateProfileModal showModal={showModal} setShowModal={setShowModal} />
+        <UpdateEmployeeModal
+          showModal={showModal}
+          setShowModal={setShowModal}
+          employee={employee}
+        />
       )}
     </div>
   );
 };
 
-// Reusable Tab Button
 const TabButton = ({ label, icon, isActive, onClick }) => (
   <button
     onClick={onClick}
@@ -135,4 +147,4 @@ const TabButton = ({ label, icon, isActive, onClick }) => (
   </button>
 );
 
-export default UserDashboard;
+export default EmployeeDashboard;

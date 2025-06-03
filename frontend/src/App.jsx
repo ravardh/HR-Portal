@@ -6,8 +6,9 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Aboutus from "./pages/Aboutus";
 import Contact from "./pages/Contact";
-import UserDashboard from "./pages/Dashboard/userDashboard";
-import AdminDashboard from "./pages/Dashboard/adminDashboard";
+import EmployeeDashbaord from "./pages/Dashboard/EmployeeDashboard.jsx";
+import DirectorDashboard from "./pages/Dashboard/DirectorDashboard.jsx";
+import HODDashboard from "./pages/Dashboard/HODDashboard.jsx"
 
 const App = () => {
   return (
@@ -20,8 +21,9 @@ const App = () => {
           <Route path="/register" element={<Register />} />
           <Route path="/aboutus" element={<Aboutus />} />
           <Route path="/contact" element={<Contact />} />
-          <Route path="/dashboard" element={<UserDashboard />} />
-          <Route path="/admin-dashboard" element={<AdminDashboard />} />
+          <Route path="/employee-dashboard" element={<EmployeeDashbaord />} />
+          <Route path="/director-dashboard" element={<DirectorDashboard />} />
+          <Route path="/hod-dashboard" element={<HODDashboard />} />
         </Routes>
       </Router>
     </>

@@ -1,5 +1,4 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "../config/api";
 import toast, { Toaster } from "react-hot-toast";
@@ -8,19 +7,17 @@ import { useAuth } from "../context/AuthContext";
 
 const Login = () => {
   const navigate = useNavigate();
-  const { setUser, setIsAdmin } = useAuth(); // Add setIsAdmin
+  const { setUser, setIsAdmin } = useAuth();
+
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [formData, setFormData] = useState({
-    email: "",
+    emailID: "",
     password: "",
   });
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
@@ -30,19 +27,37 @@ const Login = () => {
 
     try {
       const response = await axios.post("auth/login", formData);
-      sessionStorage.setItem("user", JSON.stringify(response.data.user));
-      setUser(response.data.user);
+      const userData = response.data.user;
+
+      sessionStorage.setItem("user", JSON.stringify(userData));
+      setUser(userData);
+
       toast.success("Login successful!");
-      // Check for admin role and redirect accordingly
-      if (response.data.user.role === "Admin") {
-        setIsAdmin(true);
-        navigate("/admin-dashboard");
-      } else {
-        setIsAdmin(false);
-        navigate("/dashboard");
+
+      // Navigate based on user role
+      switch (userData.role) {
+        case "Director":
+          setIsAdmin(true);
+          navigate("/director-dashboard");
+          break;
+
+        case "HOD":
+          setIsAdmin(false);
+          navigate("/hod-dashboard");
+          break;
+
+        case "Employee":
+          setIsAdmin(false);
+          navigate("/employee-dashboard"); // ✅ Fixed spelling here
+          break;
+
+        default:
+          toast.error("Invalid role. Please contact admin.");
+          break;
       }
     } catch (error) {
-      const errorMessage = error.response?.data?.message || "Login failed";
+      const errorMessage =
+        error.response?.data?.message || "Login failed, please try again";
       setError(errorMessage);
       toast.error(errorMessage);
     } finally {
@@ -56,26 +71,35 @@ const Login = () => {
       <h2 className="text-3xl font-bold mb-6 text-center text-blue-600">
         Welcome Back
       </h2>
+
       {error && (
         <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg text-center">
           {error}
         </div>
       )}
+
       <form className="space-y-5" onSubmit={handleSubmit}>
         <div>
-          <label className="block mb-1 text-gray-700">Email</label>
+          <label htmlFor="emailID" className="block mb-1 text-gray-700">
+            Email
+          </label>
           <input
+            id="emailID"
             type="email"
-            name="email"
-            value={formData.email}
+            name="emailID"
+            value={formData.emailID}
             onChange={handleChange}
             className="w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-300"
             required
           />
         </div>
+
         <div>
-          <label className="block mb-1 text-gray-700">Password</label>
+          <label htmlFor="password" className="block mb-1 text-gray-700">
+            Password
+          </label>
           <input
+            id="password"
             type="password"
             name="password"
             value={formData.password}
@@ -84,6 +108,7 @@ const Login = () => {
             required
           />
         </div>
+
         <button
           type="submit"
           disabled={isLoading}
